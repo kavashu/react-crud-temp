@@ -1,0 +1,7 @@
+---
+
+  - name: To update the version of the current web application
+    hosts: master
+    tasks:
+      - name: to change the tag name
+        command: kubectl set image deployment/npm npm-docker=kavashu/docker-npm-temp:value

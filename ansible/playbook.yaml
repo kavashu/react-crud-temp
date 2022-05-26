@@ -1,0 +1,43 @@
+---
+
+  - name: To update the version of the current web application
+    hosts: master
+    vars_files:
+      - passfile.yaml
+    tasks:
+      - name: to change the tag name
+        command: kubectl set image deployment/npm npm-docker=kavashu/docker-npm-temp:value
+      
+      - name: to copy the script file to remote location
+        copy:
+          src: tmp.sh
+          dest: /home/master/Downloads/test
+          mode: '0777'
+      
+      - name: to run the script and monitor it on every 10 second
+        command: bash /home/master/Downloads/test/tmp.sh
+        async: 600
+        poll: 10
+        register: tmp_register
+
+      - name: Check status of tasks
+        async_status: jid={{ tmp_register.ansible_job_id }}
+        register: job_result
+        until: job_result.finished
+        retries: 30
+
+      - name: To mail to me
+        when: job_result.finished
+        mail:
+          host: smtp.gmail.com
+          port: 587
+          username: "shubham.devops.1@gmail.com"
+          password: "{{ gmailpass }}" 
+          to: "shubham devops <shubham.devops.1@gmail.com>"
+          subject: "Deployment Report for small project"
+          body: "Hello Sir, kubernetes jenkins npm deployment has been completed."
+        
+
+
+
+

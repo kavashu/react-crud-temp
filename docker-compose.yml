@@ -1,0 +1,9 @@
+version: '3'
+services:
+  docker-rect-npm:
+    container_name: docker-react
+    image: kavashu/docker-npm-temp:${BUILD_NUMBER}
+    build:
+      context: .
+
+   
